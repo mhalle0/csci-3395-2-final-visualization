@@ -20,7 +20,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        var count = {};
        var pCount = {};
        data.forEach(function(elem) {
-         // Excludes all null elements
+         // Calculates average hours played (Excludes all null elements)
          if (elem.HoursPlayed != -1)
          {
            if (holder.hasOwnProperty(elem.Game))
@@ -35,6 +35,7 @@ data = d3.csv("steam-200k-cleaned.csv")
            }
          }
 
+         // Calculates number of times purchased (excludes playtime entries)
          if ((elem.Action).localeCompare("purchase"))
          {
            if (pCount.hasOwnProperty(elem.Game))
