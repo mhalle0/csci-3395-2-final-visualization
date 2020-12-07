@@ -1,1 +1,20 @@
-<h1>Main Page</h1>
+<!DOCTYPE html>
+<html>
+  <style>
+      /* put style changes here */
+      .bar {fill: steelblue;}
+  </style>
+<body>
+  <h1> Games by Number of Hours Played / Total Copies Purchased </h1>
+  <div>
+      <input id = "updateButton1" name="Update" type="button"
+      value="Toggle Data Displayed" onclick="changeGraph()">
+      <input id = "updateButton2" name="Sort1" type="button"
+      value="Sort Highest to Lowest" onclick="sortHighest()">
+      <input id = "updateButton3" name="Sort2" type="button"
+      value="Sort Lowest to Highest" onclick="sortLowest()">
+  </div>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script type="text/javascript" src="./temp_final_project.js"></script>
+</body>
+</html>
