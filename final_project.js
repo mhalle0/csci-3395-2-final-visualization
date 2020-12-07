@@ -13,6 +13,7 @@ function printEach(row)
   console.log(row);
 }
 
+
 // Append stuff to svg
 const svg = d3.select("body")
               .append("svg")
@@ -71,22 +72,35 @@ data = d3.csv("steam-200k-cleaned.csv")
        //console.log(purchaseCount.length);
 
        // Need to append theh bars before the axes, so they are layered beneath
-       updateBars(purchaseCount, 1);
+       updateGraph(purchaseCount, 1);
 });
 
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
 // 1 is for total copies purchased dataset
-function updateBars(newData, dataKey)
+function updateGraph(newData, dataKey)
 {
+  var maXvalue = null;
+  var yDomain = null;
+  if (dataKey == 0)
+  {
+      maXvalue = d3.max(totalPlayed, function(d) {return d.HoursPlayed});
+      yDomain = totalPlayed.map(function(d) {return d.Game });
+  }
+  else
+  {
+      maXvalue = d3.max(purchaseCount, function(d) {return d.NumPurchased});
+      yDomain = purchaseCount.map(function(d) {return d.Game });
+  }
+
   //set x and y axes
   var yAxis = d3.scaleBand()
-            .range([0, (purchaseCount.length + 1) * 28])
-            .domain(purchaseCount.map(function(d) {return d.Game }));
+            .range([0, (newData.length + 1) * 28])
+            .domain(yDomain);
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
-            .domain([0, d3.max(purchaseCount, function(d) {return d.NumPurchased })]);
+            .domain([0, maXvalue]);
 
   // appends background
   svg.append("rect")
@@ -120,7 +134,6 @@ function updateBars(newData, dataKey)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
                                });
-     console.log(dataKey);
 }
 
 // How to pull x and y axis creation out of data.csv function so that I can update data out of inital read?
@@ -130,12 +143,12 @@ function changeGraph()
       svg.selectAll("*").remove();
       if (displayingAvg)
       {
-          updateBars(purchaseCount, 1);
+          updateGraph(purchaseCount, 1);
           displayingAvg = false;
       }
       else
       {
-          updateBars(totalPlayed, 0);
+          updateGraph(totalPlayed, 0);
           displayingAvg = true;
       }
 }
