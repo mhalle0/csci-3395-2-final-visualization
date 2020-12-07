@@ -1,7 +1,7 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
 var width = 2000;
-var height = 4048;
+var height = 4048; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
 var totalPlayed = [];
@@ -14,7 +14,7 @@ function printEach(row)
 }
 
 
-// Append stuff to svg
+// Create and append svg
 const svg = d3.select("body")
               .append("svg")
               .attr("width", width)
@@ -67,11 +67,11 @@ data = d3.csv("steam-200k-cleaned.csv")
        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased);
        // Test to make sure correct values are being printed
-       //purchaseCount.forEach(printEach);
-       //totalPlayed.forEach(printEach);
-       //console.log(purchaseCount.length);
+         //purchaseCount.forEach(printEach);
+         //totalPlayed.forEach(printEach);
+         //console.log(purchaseCount.length);
 
-       // Need to append theh bars before the axes, so they are layered beneath
+       // Need to append the bars before the axes, so they are layered beneath
        updateGraph(purchaseCount, 1);
 });
 
@@ -81,22 +81,15 @@ data = d3.csv("steam-200k-cleaned.csv")
 function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
-  var yDomain = null;
   if (dataKey == 0)
-  {
       maXvalue = d3.max(totalPlayed, function(d) {return d.HoursPlayed});
-      yDomain = totalPlayed.map(function(d) {return d.Game });
-  }
   else
-  {
       maXvalue = d3.max(purchaseCount, function(d) {return d.NumPurchased});
-      yDomain = purchaseCount.map(function(d) {return d.Game });
-  }
 
   //set x and y axes
   var yAxis = d3.scaleBand()
             .range([0, (newData.length + 1) * 28])
-            .domain(yDomain);
+            .domain(newData.map(function(d) {return d.Game }));
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
@@ -136,7 +129,7 @@ function updateGraph(newData, dataKey)
                                });
 }
 
-// How to pull x and y axis creation out of data.csv function so that I can update data out of inital read?
+// Updates graph with different dataset
 var displayingAvg = false;
 function changeGraph()
 {
@@ -150,6 +143,42 @@ function changeGraph()
       {
           updateGraph(totalPlayed, 0);
           displayingAvg = true;
+      }
+}
+
+function sortHighest()
+{
+      svg.selectAll("*").remove();
+      if (displayingAvg)
+      {
+        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+        updateGraph(totalPlayed, 0);
+      }
+      else
+      {
+        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
+        updateGraph(purchaseCount, 1);
+          //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
+      }
+}
+
+// Probably works but I think we're having a display issue where all the lowest values are the statement
+// And our graph's not fitting everything onto the page.
+function sortLowest()
+{
+      svg.selectAll("*").remove();
+      if (displayingAvg)
+      {
+        totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
+        updateGraph(totalPlayed, 0);
+      }
+      else
+      {
+        purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
+        // Print statement shows that this does sort correctly
+        // But there's too many low values in the same range and graph only shows some of them
+          //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
+        updateGraph(purchaseCount, 1);
       }
 }
 //end of line
