@@ -1,7 +1,13 @@
 // set dimensions and margins of the graph
-margin = ({top: 100, right: 20, bottom: 70, left: 140});
-var width = 800;
+margin = ({top: 100, right: 20, bottom: 70, left: 220});
+var width = 2000;
 var height = 4048;
+
+// Declare variables here to take them out of the data.csv function
+var totalPlayed = [];
+var purchaseCount = [];
+
+var nbars = purchaseCount.length;
 
 // Test function for printing each object
 function printEach(row)
@@ -20,7 +26,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        var count = {};
        var pCount = {};
        data.forEach(function(elem) {
-         // Calculates average hours played (Excludes all null elements)
+         // Excludes all null elements
          if (elem.HoursPlayed != -1)
          {
            if (holder.hasOwnProperty(elem.Game))
@@ -35,7 +41,6 @@ data = d3.csv("steam-200k-cleaned.csv")
            }
          }
 
-         // Calculates number of times purchased (excludes playtime entries)
          if ((elem.Action).localeCompare("purchase"))
          {
            if (pCount.hasOwnProperty(elem.Game))
@@ -48,8 +53,6 @@ data = d3.csv("steam-200k-cleaned.csv")
            }
          }
        });
-       var totalPlayed = [];
-       var purchaseCount = []
        for (var prop in holder)
        {
          totalPlayed.push({ Game: prop, HoursPlayed: holder[prop] / count[prop] });
@@ -58,15 +61,44 @@ data = d3.csv("steam-200k-cleaned.csv")
        // Sorts from most average hours played to least
        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased);
-
        // Test to make sure correct values are being printed
        //purchaseCount.forEach(printEach);
        //totalPlayed.forEach(printEach);
-});
+       //console.log(purchaseCount.length);
 
-// Append stuff to svg
-const svg = d3.select("body")
-              .append("svg")
-              .attr("width", width)
-              .attr("height", height);
-// end of file
+       //*****set x and y axes (not displaying axes labels correctly)*****
+       var yAxis = d3.scaleBand()
+                 //.range([0, height])
+                 .range([0, (purchaseCount.length + 1) * 28])
+                 .domain(purchaseCount.map(function(d) {return d.Game }));
+
+       var xAxis = d3.scaleLinear()
+                 .range([margin.left, width])
+                 .domain([0, d3.max(purchaseCount, function(d) {return d.NumPurchased })]);
+
+
+       // Append stuff to svg
+       const svg = d3.select("body")
+                     .append("svg")
+                     .attr("width", width)
+                     .attr("height", height);
+
+       // appends background
+       svg.append("rect")
+          .attr("width", "100%")
+          .attr("height", "100%")
+          .style("fill", "#F5F5F2")
+
+       // append x axis
+       svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0, " + 50 + ")")
+          .call(d3.axisTop(xAxis).ticks(6));
+
+       // append y axis
+       svg.append("g")
+          .attr("class", "y axis")
+          .attr("transform", "translate(" + margin.left + ", " + 50 + ")")
+          .call(d3.axisLeft(yAxis));
+});
+//end of line
