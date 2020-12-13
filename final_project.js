@@ -13,7 +13,6 @@ function printEach(row)
   console.log(row);
 }
 
-
 // Create and append svg
 const svg = d3.select("body")
               .append("svg")
@@ -71,7 +70,7 @@ data = d3.csv("steam-200k-cleaned.csv")
          //totalPlayed.forEach(printEach);
          //console.log(purchaseCount.length);
 
-       // Need to append the bars before the axes, so they are layered beneath
+       // update nbars variable and height after data is read in
        updateGraph(purchaseCount, 1);
 });
 
@@ -89,6 +88,8 @@ function updateGraph(newData, dataKey)
   //set x and y axes
   var yAxis = d3.scaleBand()
             .range([0, (newData.length + 1) * 28])
+            // Set paddingInner to change space between the bars
+            .paddingInner(0.25)
             .domain(newData.map(function(d) {return d.Game }));
 
   var xAxis = d3.scaleLinear()
@@ -99,19 +100,29 @@ function updateGraph(newData, dataKey)
   svg.append("rect")
      .attr("width", "100%")
      .attr("height", "100%")
-     .style("fill", "#F5F5F2")
+     .style("fill", "#F5F5F2");
+
+  // change header text
+  if (dataKey == 0)
+    d3.select("h1").text("Games by Number of Hours Played")
+  else {
+    d3.select("h1").text("Games by Total Copies Purchased")
+  }
 
   // append x axis
   svg.append("g")
      .attr("class", "x axis")
-     .attr("transform", "translate(0, " + 50 + ")")
-     .call(d3.axisTop(xAxis).ticks(6));
+     .attr("transform", "translate(" + 140 + ", " + 50 + ")")
+     .call(d3.axisTop(xAxis).ticks(6))
+     // Can increase the font size of the y-axis with this call, but some games have really long names
+     .style("font-size", "14px");
 
   // append y axis
   svg.append("g")
      .attr("class", "y axis")
-     .attr("transform", "translate(" + margin.left + ", " + 50 + ")")
-     .call(d3.axisLeft(yAxis));
+     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
+     .call(d3.axisLeft(yAxis))
+     .style("font-size", "14px");
 
   // create the bars for bargraph
    svg.selectAll(".bar")
@@ -119,7 +130,7 @@ function updateGraph(newData, dataKey)
      .enter()
      .append("g")
      .append("rect")
-     .attr("transform", "translate(" + margin.left + ", " + 50 + ")")
+     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
      .attr("class", "bar")
      .attr("y", function(d) {return yAxis(d.Game); })
      .attr("height", yAxis.bandwidth())
