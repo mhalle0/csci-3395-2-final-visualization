@@ -160,14 +160,14 @@ function changeGraph()
 function sortHighest()
 {
       svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+      purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
       if (displayingAvg)
       {
-        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
         updateGraph(totalPlayed, 0);
       }
       else
       {
-        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
         updateGraph(purchaseCount, 1);
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
@@ -178,17 +178,59 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
+      purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
-        totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
         updateGraph(totalPlayed, 0);
       }
       else
       {
-        purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
         // Print statement shows that this does sort correctly
         // But there's too many low values in the same range and graph only shows some of them
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
+        updateGraph(purchaseCount, 1);
+      }
+}
+
+// Sorts the data alphabetically from 'A'-'Z'. Not case sensitive.
+// Again, seems to sort correctly but it's not displaying all the data.
+function sortAlphabet()
+{
+      svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort(function(a, b)
+      {
+        var game1 = a.Game.toLowerCase();
+        var game2 = b.Game.toLowerCase();
+        if (game1 > game2)
+          return 1;
+        if (game2 > game1)
+          return -1;
+        else
+          return 0;
+      });
+
+      purchaseCount = purchaseCount.sort(function(a, b)
+      {
+        var game1 = a.Game.toLowerCase();
+        var game2 = b.Game.toLowerCase();
+        if (game1 > game2)
+          return 1;
+        if (game2 > game1)
+          return -1;
+        else
+          return 0;
+      });
+
+      // Test print
+      //totalPlayed.forEach(function(d) {console.log(d.Game); })
+
+      if (displayingAvg)
+      {
+        updateGraph(totalPlayed, 0);
+      }
+      else
+      {
         updateGraph(purchaseCount, 1);
       }
 }
