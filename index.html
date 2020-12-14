@@ -2,7 +2,89 @@
 <html>
   <style>
       /* put style changes here */
+
       .bar {fill: steelblue;}
+    
+      body
+      {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #cce6ff
+      }
+
+      .navbar
+      {
+        overflow: hidden;
+        background-color: #333;
+      }
+
+      .navbar a
+      {
+        float: left;
+        font-size: 16px;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      .topnav-right
+      {
+        float: right;
+      }
+
+      .dropdown
+      {
+        float: left;
+        overflow: hidden;
+      }
+
+      .dropdown .dropbtn
+      {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+      }
+
+      .navbar a:hover, .dropdown:hover .dropbtn
+      {
+        background-color: red;
+      }
+
+      .dropdown-content
+      {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+
+      .dropdown-content a
+      {
+        float: none;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+      }
+
+      .dropdown-content a:hover
+      {
+        background-color: #ddd;
+      }
+
+      .dropdown:hover .dropdown-content
+      {
+        display: block;
+      }
+
       .d3-tip{
 	background: rgba(42, 42, 42, .8);
 	font-family: "Open Sans", sans-serif;
@@ -12,17 +94,28 @@
 	padding: 12px;
 	text-align: center;
 	}
+
   </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <body>
-  <h1> Games by Number of Hours Played / Total Copies Purchased </h1>
-  <div>
-      <input id = "updateButton1" name="Update" type="button"
-      value="Toggle Data Displayed" onclick="changeGraph()">
-      <input id = "updateButton2" name="Sort1" type="button"
-      value="Sort Highest to Lowest" onclick="sortHighest()">
-      <input id = "updateButton3" name="Sort2" type="button"
-      value="Sort Lowest to Highest" onclick="sortLowest()">
+  <div class="navbar">
+    <a href="#toggle" onclick="changeGraph()">Toggle Data</a>
+    <div class="dropdown">
+      <button class="dropbtn">Sorty By
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="#" onclick="sortHighest()">Highest to Lowest</a>
+        <a href="#" onclick="sortLowest()">Lowest to Highest</a>
+        <a href="#" onclick="sortAlphabet()">Alphabetically</a>
+      </div>
+    </div>
+    <div class="topnav-right">
+        <a href="#" onclick="groupData()">Group Similar Values</a>
+    </div>
   </div>
+  <h1> Games by Total Copies Purchased </h1>
   <script src="https://unpkg.com/d3-v6-tip@1.0.6/build/d3-v6-tip.js"></script>
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script type="text/javascript" src="./final_project.js"></script>
