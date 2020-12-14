@@ -24,29 +24,53 @@
     </style>
   </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-2">
+  <div class="p-4">
+    <div class="container-fluid px-0">
+      <div class="row" id="project-title">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <h1 class="text-center">CSCI 3395 2 · Data Visualization · Final Project</h1>
+          <h2 class="text-center">Steam Data Visualization</h2>
+        </div>
+        <div class="col-md-2"></div>
       </div>
-      <div class="col-md-8">
-        <h2> Games by Number of Hours Played / Total Copies Purchased </h2>
+      <div class="divider py-1 bg-dark my-4"></div>      
+      <div class="row" id="viz-header">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <h5 class="text-center">Games by Number of Hours Played / Total Copies Purchased</h5>
+        </div>
+        <div class="col-md-2"></div>
       </div>
-      <div class="col-md-2">
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <button type="button" id = "btn_toggledata_overview" data-toggle="button" name="Update" 
+          onclick="changeGraph()" class="btn btn-dark">Toggle Data</button>
+          <button type="button" id = "btn_sorthighest_overview" data-toggle="button" name="Sort1" 
+          onclick="sortHighest()" class="btn btn-dark">Sort Highest to Lowest</button>
+          <button type="button" id = "btn_sortlowest_overview" data-toggle="button" name="Sort2" 
+          onclick="sortLowest()" class="btn btn-dark">Sort Lowest to Highest</button>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-lg-6" id="viz">
+          <!-- append svg to this element-->
+        </div>
+      </div>
     </div>
-    <div class="row">
-      <div class="col-md-3">
+  </div>
+
+  <div class="my-1 mx-5" id="footer">
+    <div class="container-fluid px-0">
+      <div class="row" id="credits">
+        <div class="col-md-12">
+          <p class="text-left text-muted">Visualization by Joseph Baker, Kimberly Anne Fontillas, Marlee Jackson, and Morgen Halle<br>
+            <a href="https://www.kaggle.com/tamber/steam-video-games" class="text-reset text-left">Original Dataset</a>
+          </p>
+        </div>
       </div>
-      <div class="col-md-6">
-        <button type="button" id = "btn_toggledata_overview" data-toggle="button" name="Update" 
-        onclick="changeGraph()" class="btn btn-dark">Toggle Data</button>
-        <button type="button" id = "btn_sorthighest_overview" data-toggle="button" name="Sort1" 
-        onclick="sortHighest()" class="btn btn-dark">Sort Highest to Lowest</button>
-        <button type="button" id = "btn_sortlowest_overview" data-toggle="button" name="Sort2" 
-        onclick="sortLowest()" class="btn btn-dark">Sort Lowest to Highest</button>
-      </div>
-      <div class="col-md-3">
-      </div>
-    </div>
     </div>
   </div>
 
