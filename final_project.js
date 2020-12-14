@@ -124,9 +124,9 @@ function updateGraph(newData, dataKey)
 
   // change header text
   if (dataKey == 0)
-    d3.select("h5").text("Games by Number of Hours Played")
+    d3.select("h4").text("Games by Number of Hours Played")
   else {
-    d3.select("h5").text("Games by Total Copies Purchased")
+    d3.select("h4").text("Games by Total Copies Purchased")
   }
 
   // append x axis
