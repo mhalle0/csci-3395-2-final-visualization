@@ -1,7 +1,8 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
 var width  = document.getElementById('viz').clientWidth;
-var height = width * 0.5; // This height doesn't show all the data
+console.log(width);
+var height = 100860; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
 //var totalPlayed = [];
@@ -99,7 +100,6 @@ data = d3.csv("steam-200k-cleaned.csv")
 });
 function getBarColor(d){
 	hrs = d.TotalHours;
-	console.log(logScale(23));
 	return logColorScale(hrs);
 	//return seqColorScale(hrs); 
 }
