@@ -8,8 +8,8 @@ var height = width * 0.5; // This height doesn't show all the data
 //var purchaseCount = [];
 //var totalHours = [];
 var dataByGame = [];
-var minhrs = 0;
-var maxhrs = 0;
+var minhrs = 1;
+var maxhrs = 999999;
 // Test function for printing each object
 function printEach(row)
 {
@@ -28,7 +28,9 @@ var tip = d3.tip()
 			console.log(d);
 			return `${gameName}</br>${num} units purchased</br>${hrs} average hours played</br>${total} total hours played`;
 		});
-
+var logScale = d3.scaleLog().domain([minhrs, maxhrs]);
+var logColorScale = d3.scaleSequential(function(d){return d3.interpolateGreens(logScale(d));});
+var seqColorScale = d3.scaleSequential(d3.interpolateGreens).domain([minhrs, maxhrs]);
 // Create and append svg
 const svg = d3.select("#vizArea")
               .append("svg")
@@ -95,7 +97,12 @@ data = d3.csv("steam-200k-cleaned.csv")
        // update nbars variable and height after data is read in
        updateGraph(dataByGame, 1);
 });
-
+function getBarColor(d){
+	hrs = d.TotalHours;
+	console.log(logScale(23));
+	return logColorScale(hrs);
+	//return seqColorScale(hrs); 
+}
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
 // 1 is for total copies purchased dataset
@@ -156,6 +163,7 @@ function updateGraph(newData, dataKey)
      .attr("class", "bar")
      .attr("y", function(d) {return yAxis(d.Game); })
      .attr("height", yAxis.bandwidth())
+     .attr("fill", getBarColor)
      .attr("x", 0)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
@@ -203,18 +211,20 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
-      totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
-      purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
+      //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
+      //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
-        updateGraph(totalPlayed, 0);
+	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
+        updateGraph(dataByGame, 0);
       }
       else
       {
         // Print statement shows that this does sort correctly
         // But there's too many low values in the same range and graph only shows some of them
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
-        updateGraph(purchaseCount, 1);
+        dataByGame = dataByGame.sort((a,b) => a.NumPurchased - b.NumPurchased);
+        updateGraph(dataByGame, 1);
       }
 }
 
