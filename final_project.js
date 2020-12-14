@@ -1,7 +1,7 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
-var width = 1900;
-var height = 4048; // This height doesn't show all the data
+var width  = document.getElementById('viz').clientWidth;
+var height = width * 0.5; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
 var totalPlayed = [];
@@ -30,7 +30,7 @@ var tip = d3.tip()
 		});
 
 // Create and append svg
-const svg = d3.select("body")
+const svg = d3.select("#vizArea")
               .append("svg")
               .attr("width", width)
               .attr("height", height);
@@ -120,9 +120,9 @@ function updateGraph(newData, dataKey)
 
   // change header text
   if (dataKey == 0)
-    d3.select("h1").text("Games by Number of Hours Played")
+    d3.select("h5").text("Games by Number of Hours Played")
   else {
-    d3.select("h1").text("Games by Total Copies Purchased")
+    d3.select("h5").text("Games by Total Copies Purchased")
   }
 
   // append x axis
@@ -154,7 +154,7 @@ function updateGraph(newData, dataKey)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
                                })
-     .on("click",tip.show);	
+     .on("click",tip.show);
 }
 
 // Updates graph with different dataset
@@ -276,10 +276,10 @@ function groupData()
   });
 
   // Prints map for testing
-
+/*
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
-  }
+  }*/
 }
 //end of file
