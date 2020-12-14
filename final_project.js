@@ -1,7 +1,7 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
-var width = 2000;
-var height = 4048; // This height doesn't show all the data
+var width  = document.getElementById('viz').clientWidth;
+var height = width / 3.236; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
 var totalPlayed = [];
@@ -13,13 +13,28 @@ function printEach(row)
   console.log(row);
 }
 
+var tip = d3.tip()
+		.attr("class","d3-tip")
+		.offset([-5,0])
+		.html(function (d){
+			properties = d.target.__data__;
+			gameName = properties.Game;
+			num = properties.NumPurchased;
+			hrs = properties.HoursPlayed;
+			if(hrs == undefined){
+				console.log(d);
+				return `${gameName}</br>${num} units purchased`;
+			}else{
+				return `${gameName}</br>${hrs} hours played`;
+			}
+		});
 
 // Create and append svg
-const svg = d3.select("body")
+const svg = d3.select("#vizArea")
               .append("svg")
               .attr("width", width)
               .attr("height", height);
-
+svg.call(tip);
 // Get data
 data = d3.csv("steam-200k-cleaned.csv")
             .then(function (data) {
@@ -71,7 +86,7 @@ data = d3.csv("steam-200k-cleaned.csv")
          //totalPlayed.forEach(printEach);
          //console.log(purchaseCount.length);
 
-       // Need to append the bars before the axes, so they are layered beneath
+       // update nbars variable and height after data is read in
        updateGraph(purchaseCount, 1);
 });
 
@@ -89,6 +104,8 @@ function updateGraph(newData, dataKey)
   //set x and y axes
   var yAxis = d3.scaleBand()
             .range([0, (newData.length + 1) * 28])
+            // Set paddingInner to change space between the bars
+            .paddingInner(0.25)
             .domain(newData.map(function(d) {return d.Game }));
 
   var xAxis = d3.scaleLinear()
@@ -99,19 +116,29 @@ function updateGraph(newData, dataKey)
   svg.append("rect")
      .attr("width", "100%")
      .attr("height", "100%")
-     .style("fill", "#F5F5F2")
+     .style("fill", "#F5F5F2");
+
+  // change header text
+  if (dataKey == 0)
+    d3.select("h5").text("Games by Number of Hours Played")
+  else {
+    d3.select("h5").text("Games by Total Copies Purchased")
+  }
 
   // append x axis
   svg.append("g")
      .attr("class", "x axis")
-     .attr("transform", "translate(0, " + 50 + ")")
-     .call(d3.axisTop(xAxis).ticks(6));
+     .attr("transform", "translate(" + 140 + ", " + 50 + ")")
+     .call(d3.axisTop(xAxis).ticks(6))
+     // Can increase the font size of the y-axis with this call, but some games have really long names
+     .style("font-size", "14px");
 
   // append y axis
   svg.append("g")
      .attr("class", "y axis")
-     .attr("transform", "translate(" + margin.left + ", " + 50 + ")")
-     .call(d3.axisLeft(yAxis));
+     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
+     .call(d3.axisLeft(yAxis))
+     .style("font-size", "14px");
 
   // create the bars for bargraph
    svg.selectAll(".bar")
@@ -119,14 +146,15 @@ function updateGraph(newData, dataKey)
      .enter()
      .append("g")
      .append("rect")
-     .attr("transform", "translate(" + margin.left + ", " + 50 + ")")
+     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
      .attr("class", "bar")
      .attr("y", function(d) {return yAxis(d.Game); })
      .attr("height", yAxis.bandwidth())
      .attr("x", 0)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
-                               });
+                               })
+     .on("click",tip.show);	
 }
 
 // Updates graph with different dataset
@@ -149,14 +177,14 @@ function changeGraph()
 function sortHighest()
 {
       svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+      purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
       if (displayingAvg)
       {
-        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
         updateGraph(totalPlayed, 0);
       }
       else
       {
-        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
         updateGraph(purchaseCount, 1);
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
@@ -167,18 +195,91 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
+      purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
-        totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
         updateGraph(totalPlayed, 0);
       }
       else
       {
-        purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
         // Print statement shows that this does sort correctly
         // But there's too many low values in the same range and graph only shows some of them
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
         updateGraph(purchaseCount, 1);
       }
 }
-//end of line
+
+// Sorts the data alphabetically from 'A'-'Z'. Not case sensitive.
+// Again, seems to sort correctly but it's not displaying all the data.
+function sortAlphabet()
+{
+      svg.selectAll("*").remove();
+      totalPlayed = totalPlayed.sort(function(a, b)
+      {
+        var game1 = a.Game.toLowerCase();
+        var game2 = b.Game.toLowerCase();
+        if (game1 > game2)
+          return 1;
+        if (game2 > game1)
+          return -1;
+        else
+          return 0;
+      });
+
+      purchaseCount = purchaseCount.sort(function(a, b)
+      {
+        var game1 = a.Game.toLowerCase();
+        var game2 = b.Game.toLowerCase();
+        if (game1 > game2)
+          return 1;
+        if (game2 > game1)
+          return -1;
+        else
+          return 0;
+      });
+
+      // Test print
+      //totalPlayed.forEach(function(d) {console.log(d.Game); })
+
+      if (displayingAvg)
+      {
+        updateGraph(totalPlayed, 0);
+      }
+      else
+      {
+        updateGraph(purchaseCount, 1);
+      }
+}
+
+// Groups together games with the same x value
+// Still need to figure out how we would display this (using hover tooltip maybe?)
+function groupData()
+{
+  var hoursMap = {};
+  // Not updating the actual variables for now, so it doesn't mess with the rendering
+  var TEMP_totalPlayed = totalPlayed.forEach(function(d){
+    // Rounds to the nearest whole digit to ensure that close decimal values are grouped together
+    // Any game with less than 30 minutes played is listed as zero hours
+      if (d.HoursPlayed >= 0.5)
+          roundedHours = Math.round(d.HoursPlayed);
+      else
+          roundedHours = 0;
+
+      hoursMap[roundedHours] = hoursMap[roundedHours] || [];
+      hoursMap[roundedHours].push(d.Game);
+  });
+  var purchaseMap = {};
+  var TEMP_purchaseCount = purchaseCount.forEach(function(d){
+      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
+      purchaseMap[d.NumPurchased].push(d.Game);
+  });
+
+  // Prints map for testing
+/*
+  for (var key in purchaseMap)
+  {
+    console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
+  }*/
+}
+//end of file
