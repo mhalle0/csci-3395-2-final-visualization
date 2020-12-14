@@ -1,0 +1,24 @@
+/**
+ * Custom cross-browser styles for keyboard :focus overrides defaults.
+ */
+ *:focus {
+    outline: 0 !important;
+    box-shadow:
+      0 0 0 .2rem #fff,
+      0 0 0 .35rem #069 !important;
+  }
+
+  /**
+   * Remove focus styles for non-keyboard :focus.
+   */
+  *:focus:not(.focus-visible) {
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .container-fluid {
+    padding-right:0;
+    padding-left:0;
+    margin-right:auto;
+    margin-left:auto
+  }
