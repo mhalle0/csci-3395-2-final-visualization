@@ -236,12 +236,12 @@ function sortAlphabet()
 }
 
 // Groups together games with the same x value
-// Could be used later to put games with the same x value under the same bar
 // Still need to figure out how we would display this (using hover tooltip maybe?)
 function groupData()
 {
   var hoursMap = {};
-  totalPlayed = totalPlayed.forEach(function(d){
+  // Not updating the actual variables for now, so it doesn't mess with the rendering
+  var TEMP_totalPlayed = totalPlayed.forEach(function(d){
     // Rounds to the nearest whole digit to ensure that close decimal values are grouped together
     // Any game with less than 30 minutes played is listed as zero hours
       if (d.HoursPlayed >= 0.5)
@@ -253,16 +253,16 @@ function groupData()
       hoursMap[roundedHours].push(d.Game);
   });
   var purchaseMap = {};
-  purchaseCount = purchaseCount.forEach(function(d){
+  var TEMP_purchaseCount = purchaseCount.forEach(function(d){
       purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
       purchaseMap[d.NumPurchased].push(d.Game);
   });
 
   // Prints map for testing
-  /*
+
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
-  }*/
+  }
 }
 //end of file
