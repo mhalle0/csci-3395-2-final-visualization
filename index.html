@@ -130,17 +130,17 @@
         <div class="row">
           <div class="btn-toolbar" role="toolbar">
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
               <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update"
               onclick="changeGraph()">Toggle Data</button>
+              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
               <div class="btn-group" role="group">
                 <button id="btnGroupDrop1type" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">Sort Data</button>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="#" onclick="sortAlphabet()">Alphabetically</a>
                   <a class="dropdown-item" href="#" id="btn_sorthighest_overview" data-toggle="button" name="Sort1"
-                  onclick="sortHighest()">Highest to Lowest</a>
+                  onclick="sortHighest()">Highest to Lowest Average Hours Played</a>
                   <a class="dropdown-item" href="#" id="btn_sortlowest_overview" data-toggle="button" name="Sort2"
-                  onclick="sortLowest()">Lowest to Highest</a>
+                  onclick="sortLowest()">Lowest to Highest Average Hours Played</a>
                 </div>
               </div>
             </div>
@@ -154,7 +154,7 @@
       <div class="row" id="viz-header">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-          <h5 class="text-center">Games by Number of Hours Played / Total Copies Purchased</h5>
+          <h5 class="text-center">Games by Total Copies Purchased</h5>
         </div>
         <div class="col-md-2"></div>
       </div>

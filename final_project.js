@@ -6,6 +6,7 @@ var height = width * 0.5; // This height doesn't show all the data
 // Declare variables here to take them out of the data.csv function
 var totalPlayed = [];
 var purchaseCount = [];
+var overallPlaytime = [];
 
 // Test function for printing each object
 function printEach(row)
@@ -19,15 +20,17 @@ var tip = d3.tip()
 		.html(function (d){
 			properties = d.target.__data__;
 			gameName = properties.Game;
-			num = properties.NumPurchased;
-			hrs = properties.HoursPlayed;
-			if(hrs == undefined){
-				console.log(d);
-				return `${gameName}</br>${num} units purchased`;
-			}else{
-				return `${gameName}</br>${hrs} hours played`;
-			}
-		});
+			hrs = totalPlayed.find(elem => elem.Game == gameName).HoursPlayed;
+			num = purchaseCount.find(elem => elem.Game == gameName).NumPurchased;
+      totalHrs = overallPlaytime.find(elem => elem.Game == gameName).TotalHours;
+				//console.log(d);
+      if (Math.round(hrs) >= 1)
+			     return `${gameName}</br>${Math.round(hrs)} hours played</br>${num} purchased
+           </br>${Math.round(totalHrs)} total hours played`;
+      else
+           return `${gameName}</br> < 1 average hours played</br>${num} purchased
+           </br> < 1 total hours played`;
+    });
 
 // Create and append svg
 const svg = d3.select("#vizArea")
@@ -76,23 +79,24 @@ data = d3.csv("steam-200k-cleaned.csv")
        for (var prop in holder)
        {
          totalPlayed.push({ Game: prop, HoursPlayed: holder[prop] / count[prop] });
+         overallPlaytime.push({ Game: prop, TotalHours: holder[prop] });
          purchaseCount.push({ Game: prop, NumPurchased: pCount[prop] });
        }
-       // Sorts from most average hours played to least
+       // Sorts from most average hours played to least and puts data in global variables
        totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased);
+
        // Test to make sure correct values are being printed
          //purchaseCount.forEach(printEach);
          //totalPlayed.forEach(printEach);
+         //overallPlaytime.forEach(printEach);
          //console.log(purchaseCount.length);
 
        // update nbars variable and height after data is read in
        updateGraph(purchaseCount, 1);
 });
 
-// Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
-// 0 is for average hours played dataset
-// 1 is for total copies purchased dataset
+// Reworked this so that you always pass in both hours played and purchase count
 function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
