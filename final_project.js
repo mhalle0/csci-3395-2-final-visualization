@@ -1,7 +1,7 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
 var width  = document.getElementById('viz').clientWidth;
-var height = width * 0.5; // This height doesn't show all the data
+var height = 100820;
 
 // Declare variables here to take them out of the data.csv function
 var totalPlayed = [];
