@@ -276,10 +276,10 @@ function groupData()
   });
 
   // Prints map for testing
-
+/*
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
-  }
+  }*/
 }
 //end of file
