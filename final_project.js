@@ -1,6 +1,6 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
-var width = 2000;
+var width = 1900;
 var height = 4048; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
@@ -234,4 +234,35 @@ function sortAlphabet()
         updateGraph(purchaseCount, 1);
       }
 }
-//end of line
+
+// Groups together games with the same x value
+// Could be used later to put games with the same x value under the same bar
+// Still need to figure out how we would display this (using hover tooltip maybe?)
+function groupData()
+{
+  var hoursMap = {};
+  totalPlayed = totalPlayed.forEach(function(d){
+    // Rounds to the nearest whole digit to ensure that close decimal values are grouped together
+    // Any game with less than 30 minutes played is listed as zero hours
+      if (d.HoursPlayed >= 0.5)
+          roundedHours = Math.round(d.HoursPlayed);
+      else
+          roundedHours = 0;
+
+      hoursMap[roundedHours] = hoursMap[roundedHours] || [];
+      hoursMap[roundedHours].push(d.Game);
+  });
+  var purchaseMap = {};
+  purchaseCount = purchaseCount.forEach(function(d){
+      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
+      purchaseMap[d.NumPurchased].push(d.Game);
+  });
+
+  // Prints map for testing
+  /*
+  for (var key in purchaseMap)
+  {
+    console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
+  }*/
+}
+//end of file

@@ -2,10 +2,12 @@
 <html>
   <style>
       /* put style changes here */
+
       .bar {fill: steelblue;}
       body
       {
         font-family: Arial, Helvetica, sans-serif;
+        background-color: #cce6ff
       }
 
       .navbar
@@ -22,6 +24,11 @@
         text-align: center;
         padding: 14px 16px;
         text-decoration: none;
+      }
+
+      .topnav-right
+      {
+        float: right;
       }
 
       .dropdown
@@ -92,9 +99,12 @@
         <a href="#" onclick="sortAlphabet()">Alphabetically</a>
       </div>
     </div>
+    <div class="topnav-right">
+        <a href="#" onclick="groupData()">Group Similar Values</a>
+    </div>
   </div>
   <h1> Games by Total Copies Purchased </h1>
   <script src="https://d3js.org/d3.v6.min.js"></script>
-  <script type="text/javascript" src="./temp_final_project.js"></script>
+  <script type="text/javascript" src="./final_project.js"></script>
 </body>
 </html>
