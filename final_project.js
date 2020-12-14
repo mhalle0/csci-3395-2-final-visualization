@@ -13,13 +13,28 @@ function printEach(row)
   console.log(row);
 }
 
+var tip = d3.tip()
+		.attr("class","d3-tip")
+		.offset([-5,0])
+		.html(function (d){
+			properties = d.target.__data__;
+			gameName = properties.Game;
+			num = properties.NumPurchased;
+			hrs = properties.HoursPlayed;
+			if(hrs == undefined){
+				console.log(d);
+				return `${gameName}</br>${num} units purchased`;
+			}else{
+				return `${gameName}</br>${hrs} hours played`;
+			}
+		});
 
 // Create and append svg
 const svg = d3.select("body")
               .append("svg")
               .attr("width", width)
               .attr("height", height);
-
+svg.call(tip);
 // Get data
 data = d3.csv("steam-200k-cleaned.csv")
             .then(function (data) {
@@ -126,7 +141,8 @@ function updateGraph(newData, dataKey)
      .attr("x", 0)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
-                               });
+                               })
+     .on("click",tip.show);	
 }
 
 // Updates graph with different dataset
