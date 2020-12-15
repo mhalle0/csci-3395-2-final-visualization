@@ -69,7 +69,7 @@ data = d3.csv("steam-200k-cleaned.csv")
               count[elem.Game] = 1;
            }
          }
-	
+
          if ((elem.Action).localeCompare("purchase"))
          {
            if (pCount.hasOwnProperty(elem.Game))
@@ -84,7 +84,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        });
        for (var prop in holder)
        {
-         
+
 	hrs = holder[prop];
 	if(hrs > maxhrs){
 		maxhrs = hrs;
@@ -97,20 +97,20 @@ data = d3.csv("steam-200k-cleaned.csv")
        // Sorts from most average hours played to least
        //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
-  
+
        // Test to make sure correct values are being printed
          //purchaseCount.forEach(printEach);
          //totalPlayed.forEach(printEach);
          //overallPlaytime.forEach(printEach);
          //console.log(purchaseCount.length);
-  
+
        updateGraph(dataByGame, 1);
 
 });
 function getBarColor(d){
 	hrs = d.TotalHours;
 	return logColorScale(hrs);
-	//return seqColorScale(hrs); 
+	//return seqColorScale(hrs);
 }
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
@@ -133,7 +133,7 @@ function updateGraph(newData, dataKey)
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
-            .domain([0, maXvalue]);
+            .domain([0, maXvalue + (maXvalue * .1)]);
 
   // appends background
   svg.append("rect")
@@ -175,8 +175,23 @@ function updateGraph(newData, dataKey)
      .attr("height", yAxis.bandwidth())
      .attr("fill", getBarColor)
      .attr("x", 0)
-     .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
-                                 else return xAxis(d.NumPurchased);
+     .attr("width", function(d) {if (dataKey == 0)
+                                 {
+                                   // Set minimum bar size if the data is too small
+                                   if ((xAxis(d.HoursPlayed) - margin.left) < 5)
+                                      return 5;
+                                   else
+                                      return xAxis(d.HoursPlayed) - margin.left;
+                                 }
+                                 else
+                                 {
+                                     // Test print for the scaling of the bars
+                                     //console.log(d.NumPurchased + "////" + xAxis(d.NumPurchased));
+                                     if ((xAxis(d.NumPurchased) - margin.left) < 5)
+                                        return 5;
+                                     else
+                                        return xAxis(d.NumPurchased) - margin.left;
+                                 }
                                })
      .attr("stroke", "black")
      .on("mouseover",tip.show)
