@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
 
@@ -22,9 +21,6 @@
 
     <!-- currently d3 only takes CSS from here, not external stylesheet - to be fixed -->
     <style>
-      .bar {
-      	  
-      }
       .d3-tip 
       {
         background: rgba(42, 42, 42, .8);
@@ -33,7 +29,6 @@
         border-radius: 2px;
         padding: 12px;
         text-align: center;
-
       }
 
       .navbar
@@ -110,14 +105,18 @@
         display: block;
       }
 
+
+      #instructions
+      {
+        text-align: right;
+      }
     </style>
   </head>
-  
+
 <body>
 
   <div class="p-4">
     <div class="container-fluid px-0">
-      
       <div class="row" id="project-title">
         <div class="col-md-2"></div>
         <div class="col-md-8">
@@ -126,24 +125,33 @@
         </div>
         <div class="col-md-2"></div>
       </div>
-      
-      <div class="divider py-1 bg-dark my-4"></div>      
-      
+
+      <div class="divider py-1 bg-dark my-4"></div>
+      <div class= "instructions">
+        <h5>Instructions:</h5>
+        <p> "Toggle Data" - Click to switch between a visualization of Steam games by Average Hours Played or Total Number of Copies Purchased </p>
+        <p> (NOT WORKING YET) "Group Similar Values" - Click to make every bar display a unique value. All games that fit under that value can be seen by clicking the y-axis value. <p>
+        <p> "Sort Data" - Click to pick how you want the displayed data to be sorted. </p>
+        <p> You can also hover over the bars to get exact data about a game as well as information that is not displayed. </p>
+      </div>
       <div class="mx-auto" style="width: 400px">
         <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-2"></div>
           <div class="btn-toolbar" role="toolbar">
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
-              <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update" 
+              <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update"
               onclick="changeGraph()">Toggle Data</button>
+              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
               <div class="btn-group" role="group">
                 <button id="btnGroupDrop1type" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">Sort Data</button>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="#" onclick="sortAlphabet()">Alphabetically</a>
-                  <a class="dropdown-item" href="#" id="btn_sorthighest_overview" data-toggle="button" name="Sort1" 
-                  onclick="sortHighest()">Highest to Lowest</a>
-                  <a class="dropdown-item" href="#" id="btn_sortlowest_overview" data-toggle="button" name="Sort2" 
-                  onclick="sortLowest()">Lowest to Highest</a>
+
+                  <a class="dropdown-item" href="#" id="btn_sorthighest_overview" data-toggle="button" name="Sort1"
+                  onclick="sortHighest()">Highest to Lowest Average Hours Played</a>
+                  <a class="dropdown-item" href="#" id="btn_sortlowest_overview" data-toggle="button" name="Sort2"
+                  onclick="sortLowest()">Lowest to Highest Average Hours Played</a>
                 </div>
               </div>
             </div>
@@ -151,13 +159,13 @@
         </div>
       </div>
 
-      <div class="divider py-1 bg-dark my-4"></div>      
+      <div class="divider py-1 bg-dark my-4"></div>
 
-      
+
       <div class="row" id="viz-header">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-          <h5 class="text-center">Games by Number of Hours Played / Total Copies Purchased</h5>
+          <h4 class="text-center">Games by Total Copies Purchased</h4>
         </div>
         <div class="col-md-2"></div>
       </div>
@@ -189,8 +197,6 @@
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-
   <script src="https://unpkg.com/d3-v6-tip@1.0.6/build/d3-v6-tip.js"></script>
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script type="text/javascript" src="./final_project.js"></script>

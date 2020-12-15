@@ -5,7 +5,6 @@ var width  = document.getElementById('viz').clientWidth;
 console.log(width);
 var height = 100860; // This height doesn't show all the data
 
-
 // Declare variables here to take them out of the data.csv function
 //var totalPlayed = [];
 //var purchaseCount = [];
@@ -28,12 +27,18 @@ var tip = d3.tip()
 			num = properties.NumPurchased;
 			hrs = properties.HoursPlayed;
 			total = properties.TotalHours;
-			console.log(d);
-			return `${gameName}</br>${num} units purchased</br>${hrs} average hours played</br>${total} total hours played`;
+			//console.log(d);
+			if (Math.round(hrs) >= 1)
+			     return `${gameName}</br>${Math.round(hrs)} hours played</br>${num} purchased
+           </br>${Math.round(total)} total hours played`;
+      else
+           return `${gameName}</br> < 1 average hours played</br>${num} purchased
+           </br> < 1 total hours played`;
 		});
 var logScale = d3.scaleLog().domain([minhrs, maxhrs]);
 var logColorScale = d3.scaleSequential(function(d){return d3.interpolateGreens(logScale(d));});
 var seqColorScale = d3.scaleSequential(d3.interpolateGreens).domain([minhrs, maxhrs]);
+
 // Create and append svg
 const svg = d3.select("#vizArea")
               .append("svg")
@@ -80,6 +85,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        });
        for (var prop in holder)
        {
+         
 	hrs = holder[prop];
 	if(hrs > maxhrs){
 		maxhrs = hrs;
@@ -92,12 +98,13 @@ data = d3.csv("steam-200k-cleaned.csv")
        // Sorts from most average hours played to least
        //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
+  
        // Test to make sure correct values are being printed
          //purchaseCount.forEach(printEach);
          //totalPlayed.forEach(printEach);
+         //overallPlaytime.forEach(printEach);
          //console.log(purchaseCount.length);
-
-
+  
        updateGraph(dataByGame, 1);
 
 });
@@ -109,6 +116,7 @@ function getBarColor(d){
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
 // 1 is for total copies purchased dataset
+
 function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
@@ -136,10 +144,9 @@ function updateGraph(newData, dataKey)
 
   // change header text
   if (dataKey == 0)
-
-    d3.select("h5").text("Games by Number of Hours Played")
+    d3.select("h4").text("Games by Average Hours Played")
   else {
-    d3.select("h5").text("Games by Total Copies Purchased")
+    d3.select("h4").text("Games by Total Copies Purchased")
 
   }
 
@@ -173,7 +180,7 @@ function updateGraph(newData, dataKey)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
                                })
-     .on("click",tip.show);	
+     .on("click",tip.show);
 }
 
 // Updates graph with different dataset
@@ -301,15 +308,11 @@ function sortAlphabet()
 //      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
 //      purchaseMap[d.NumPurchased].push(d.Game);
 //  });
-
-
   // Prints map for testing
 /*
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
   }*/
-
 //}
-
 //end of file
