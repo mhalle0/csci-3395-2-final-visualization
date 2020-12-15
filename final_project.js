@@ -2,8 +2,7 @@
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
 
 var width  = document.getElementById('viz').clientWidth;
-console.log(width);
-var height = 100860; // This height doesn't show all the data
+var height = 100820;
 
 // Declare variables here to take them out of the data.csv function
 //var totalPlayed = [];
@@ -147,7 +146,6 @@ function updateGraph(newData, dataKey)
     d3.select("h4").text("Games by Average Hours Played")
   else {
     d3.select("h4").text("Games by Total Copies Purchased")
-
   }
 
   // append x axis
@@ -215,7 +213,6 @@ function sortHighest()
       {
 	dataByGame = dataByGame.sort((a,b) => b.NumPurchased - a.NumPurchased);
         updateGraph(dataByGame, 1);
-
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
 }
@@ -225,14 +222,12 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
-
       //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
       //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
 	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
         updateGraph(dataByGame, 0);
-
       }
       else
       {
@@ -261,21 +256,6 @@ function sortAlphabet()
           return 0;
       });
 
-      //purchaseCount = purchaseCount.sort(function(a, b)
-      //{
-      //  var game1 = a.Game.toLowerCase();
-      //  var game2 = b.Game.toLowerCase();
-      //  if (game1 > game2)
-      //    return 1;
-      //  if (game2 > game1)
-      //    return -1;
-      //  else
-      //    return 0;
-      //});
-
-      // Test print
-      //totalPlayed.forEach(function(d) {console.log(d.Game); })
-
       if (displayingAvg)
       {
         updateGraph(dataByGame, 0);
@@ -286,8 +266,6 @@ function sortAlphabet()
       }
 }
 
-// Groups together games with the same x value
-// Still need to figure out how we would display this (using hover tooltip maybe?)
 //function groupData()
 //{
 //  var hoursMap = {};
