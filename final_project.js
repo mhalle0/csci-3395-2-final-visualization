@@ -28,7 +28,7 @@ var tip = d3.tip()
 			total = properties.TotalHours;
 			//console.log(d);
 			if (Math.round(hrs) >= 1)
-			     return `${gameName}</br>${Math.round(hrs)} hours played</br>${num} purchased
+			     return `${gameName}</br>${Math.round(hrs)} average hours played</br>${num} purchased
            </br>${Math.round(total)} total hours played`;
       else
            return `${gameName}</br> < 1 average hours played</br>${num} purchased
