@@ -21,9 +21,6 @@
 
     <!-- currently d3 only takes CSS from here, not external stylesheet - to be fixed -->
     <style>
-      .bar {
-        fill: steelblue;
-      }
       .d3-tip 
       {
         background: rgba(42, 42, 42, .8);
@@ -33,16 +30,19 @@
         padding: 12px;
         text-align: center;
       }
-
       #vizArea {
         width: 100%;
         height: 700px;
         overflow-x: hidden;
         overflow-y: scroll;
       }
+      
+      #instructions
+      {
+        text-align: right;
+      }
     </style>
   </head>
-  
 <body>
 
   <div class="p-4">
@@ -56,24 +56,33 @@
         </div>
         <div class="col-md-2"></div>
       </div>
-      
+        
       <div class="divider py-1 bg-dark my-4"></div>      
       
+      <div class= "instructions">
+        <h5>Instructions:</h5>
+        <p> "Toggle Data" - Click to switch between a visualization of Steam games by Average Hours Played or Total Number of Copies Purchased </p>
+        <p> (NOT WORKING YET) "Group Similar Values" - Click to make every bar display a unique value. All games that fit under that value can be seen by clicking the y-axis value. <p>
+        <p> "Sort Data" - Click to pick how you want the displayed data to be sorted. </p>
+        <p> You can also hover over the bars to get exact data about a game as well as information that is not displayed. </p>
+      </div>
       <div class="mx-auto" style="width: 400px">
         <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-2"></div>
           <div class="btn-toolbar" role="toolbar">
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
-              <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update" 
+              <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update"
               onclick="changeGraph()">Toggle Data</button>
+              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
               <div class="btn-group" role="group">
                 <button id="btnGroupDrop1type" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">Sort Data</button>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="#" onclick="sortAlphabet()">Alphabetically</a>
-                  <a class="dropdown-item" href="#" id="btn_sorthighest_overview" data-toggle="button" name="Sort1" 
-                  onclick="sortHighest()">Highest to Lowest</a>
-                  <a class="dropdown-item" href="#" id="btn_sortlowest_overview" data-toggle="button" name="Sort2" 
-                  onclick="sortLowest()">Lowest to Highest</a>
+                  <a class="dropdown-item" href="#" id="btn_sorthighest_overview" data-toggle="button" name="Sort1"
+                  onclick="sortHighest()">Highest to Lowest Average Hours Played</a>
+                  <a class="dropdown-item" href="#" id="btn_sortlowest_overview" data-toggle="button" name="Sort2"
+                  onclick="sortLowest()">Lowest to Highest Average Hours Played</a>
                 </div>
               </div>
             </div>
@@ -81,13 +90,12 @@
         </div>
       </div>
 
-      <div class="divider py-1 bg-dark my-4"></div>      
+      <div class="divider py-1 bg-dark my-4"></div>
 
-      
       <div class="row" id="viz-header">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-          <h5 class="text-center">Games by Number of Hours Played / Total Copies Purchased</h5>
+          <h4 class="text-center">Games by Total Copies Purchased</h4>
         </div>
         <div class="col-md-2"></div>
       </div>
