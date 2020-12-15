@@ -179,7 +179,8 @@ function updateGraph(newData, dataKey)
                                  else return xAxis(d.NumPurchased);
                                })
      .attr("stroke", "black")
-     .on("mouseover",tip.show);
+     .on("mouseover",tip.show)
+     .on("mouseout",tip.hide);
 }
 
 // Updates graph with different dataset
