@@ -1,13 +1,17 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
+
 var width  = document.getElementById('viz').clientWidth;
-var height = width * 0.5; // This height doesn't show all the data
+console.log(width);
+var height = 100860; // This height doesn't show all the data
 
 // Declare variables here to take them out of the data.csv function
-var totalPlayed = [];
-var purchaseCount = [];
-var overallPlaytime = [];
-
+//var totalPlayed = [];
+//var purchaseCount = [];
+//var totalHours = [];
+var dataByGame = [];
+var minhrs = 1;
+var maxhrs = 999999;
 // Test function for printing each object
 function printEach(row)
 {
@@ -20,17 +24,20 @@ var tip = d3.tip()
 		.html(function (d){
 			properties = d.target.__data__;
 			gameName = properties.Game;
-			hrs = totalPlayed.find(elem => elem.Game == gameName).HoursPlayed;
-			num = purchaseCount.find(elem => elem.Game == gameName).NumPurchased;
-      totalHrs = overallPlaytime.find(elem => elem.Game == gameName).TotalHours;
-				//console.log(d);
-      if (Math.round(hrs) >= 1)
+			num = properties.NumPurchased;
+			hrs = properties.HoursPlayed;
+			total = properties.TotalHours;
+			//console.log(d);
+			if (Math.round(hrs) >= 1)
 			     return `${gameName}</br>${Math.round(hrs)} hours played</br>${num} purchased
-           </br>${Math.round(totalHrs)} total hours played`;
+           </br>${Math.round(total)} total hours played`;
       else
            return `${gameName}</br> < 1 average hours played</br>${num} purchased
            </br> < 1 total hours played`;
-    });
+		});
+var logScale = d3.scaleLog().domain([minhrs, maxhrs]);
+var logColorScale = d3.scaleSequential(function(d){return d3.interpolateGreens(logScale(d));});
+var seqColorScale = d3.scaleSequential(d3.interpolateGreens).domain([minhrs, maxhrs]);
 
 // Create and append svg
 const svg = d3.select("#vizArea")
@@ -63,7 +70,7 @@ data = d3.csv("steam-200k-cleaned.csv")
               count[elem.Game] = 1;
            }
          }
-
+	
          if ((elem.Action).localeCompare("purchase"))
          {
            if (pCount.hasOwnProperty(elem.Game))
@@ -78,32 +85,45 @@ data = d3.csv("steam-200k-cleaned.csv")
        });
        for (var prop in holder)
        {
-         totalPlayed.push({ Game: prop, HoursPlayed: holder[prop] / count[prop] });
-         overallPlaytime.push({ Game: prop, TotalHours: holder[prop] });
-         purchaseCount.push({ Game: prop, NumPurchased: pCount[prop] });
+         
+	hrs = holder[prop];
+	if(hrs > maxhrs){
+		maxhrs = hrs;
+	}
+	 //totalhrs.push({Game:prop, TotalHours: hrs});
+         //totalPlayed.push({ Game: prop, HoursPlayed: hrs / count[prop] });
+         //purchaseCount.push({ Game: prop, NumPurchased: pCount[prop] });
+	 dataByGame.push({Game: prop, NumPurchased: pCount[prop], HoursPlayed: hrs / count[prop], TotalHours: hrs});
        }
-       // Sorts from most average hours played to least and puts data in global variables
-       totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
-       purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased);
-
+       // Sorts from most average hours played to least
+       //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+       purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
+  
        // Test to make sure correct values are being printed
          //purchaseCount.forEach(printEach);
          //totalPlayed.forEach(printEach);
          //overallPlaytime.forEach(printEach);
          //console.log(purchaseCount.length);
+  
+       updateGraph(dataByGame, 1);
 
-       // update nbars variable and height after data is read in
-       updateGraph(purchaseCount, 1);
 });
+function getBarColor(d){
+	hrs = d.TotalHours;
+	return logColorScale(hrs);
+	//return seqColorScale(hrs); 
+}
+// Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
+// 0 is for average hours played dataset
+// 1 is for total copies purchased dataset
 
-// Reworked this so that you always pass in both hours played and purchase count
 function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
   if (dataKey == 0)
-      maXvalue = d3.max(totalPlayed, function(d) {return d.HoursPlayed});
+      maXvalue = d3.max(dataByGame, function(d) {return d.HoursPlayed});
   else
-      maXvalue = d3.max(purchaseCount, function(d) {return d.NumPurchased});
+      maXvalue = d3.max(dataByGame, function(d) {return d.NumPurchased});
 
   //set x and y axes
   var yAxis = d3.scaleBand()
@@ -124,9 +144,10 @@ function updateGraph(newData, dataKey)
 
   // change header text
   if (dataKey == 0)
-    d3.select("h4").text("Games by Number of Hours Played")
+    d3.select("h4").text("Games by Average Hours Played")
   else {
     d3.select("h4").text("Games by Total Copies Purchased")
+
   }
 
   // append x axis
@@ -154,6 +175,7 @@ function updateGraph(newData, dataKey)
      .attr("class", "bar")
      .attr("y", function(d) {return yAxis(d.Game); })
      .attr("height", yAxis.bandwidth())
+     .attr("fill", getBarColor)
      .attr("x", 0)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
@@ -168,12 +190,12 @@ function changeGraph()
       svg.selectAll("*").remove();
       if (displayingAvg)
       {
-          updateGraph(purchaseCount, 1);
+          updateGraph(dataByGame, 1);
           displayingAvg = false;
       }
       else
       {
-          updateGraph(totalPlayed, 0);
+          updateGraph(dataByGame, 0);
           displayingAvg = true;
       }
 }
@@ -181,15 +203,19 @@ function changeGraph()
 function sortHighest()
 {
       svg.selectAll("*").remove();
-      totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
-      purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
+
+      //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+      //purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
       if (displayingAvg)
       {
-        updateGraph(totalPlayed, 0);
+	dataByGame = dataByGame.sort((a,b) => b.HoursPlayed - a.HoursPlayed);
+        updateGraph(dataByGame, 0);
       }
       else
       {
-        updateGraph(purchaseCount, 1);
+	dataByGame = dataByGame.sort((a,b) => b.NumPurchased - a.NumPurchased);
+        updateGraph(dataByGame, 1);
+
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
 }
@@ -199,18 +225,22 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
-      totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
-      purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
+
+      //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
+      //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
-        updateGraph(totalPlayed, 0);
+	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
+        updateGraph(dataByGame, 0);
+
       }
       else
       {
         // Print statement shows that this does sort correctly
         // But there's too many low values in the same range and graph only shows some of them
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
-        updateGraph(purchaseCount, 1);
+        dataByGame = dataByGame.sort((a,b) => a.NumPurchased - b.NumPurchased);
+        updateGraph(dataByGame, 1);
       }
 }
 
@@ -219,7 +249,7 @@ function sortLowest()
 function sortAlphabet()
 {
       svg.selectAll("*").remove();
-      totalPlayed = totalPlayed.sort(function(a, b)
+      dataByGame = dataByGame.sort(function(a, b)
       {
         var game1 = a.Game.toLowerCase();
         var game2 = b.Game.toLowerCase();
@@ -231,59 +261,58 @@ function sortAlphabet()
           return 0;
       });
 
-      purchaseCount = purchaseCount.sort(function(a, b)
-      {
-        var game1 = a.Game.toLowerCase();
-        var game2 = b.Game.toLowerCase();
-        if (game1 > game2)
-          return 1;
-        if (game2 > game1)
-          return -1;
-        else
-          return 0;
-      });
+      //purchaseCount = purchaseCount.sort(function(a, b)
+      //{
+      //  var game1 = a.Game.toLowerCase();
+      //  var game2 = b.Game.toLowerCase();
+      //  if (game1 > game2)
+      //    return 1;
+      //  if (game2 > game1)
+      //    return -1;
+      //  else
+      //    return 0;
+      //});
 
       // Test print
       //totalPlayed.forEach(function(d) {console.log(d.Game); })
 
       if (displayingAvg)
       {
-        updateGraph(totalPlayed, 0);
+        updateGraph(dataByGame, 0);
       }
       else
       {
-        updateGraph(purchaseCount, 1);
+        updateGraph(dataByGame, 1);
       }
 }
 
 // Groups together games with the same x value
 // Still need to figure out how we would display this (using hover tooltip maybe?)
-function groupData()
-{
-  var hoursMap = {};
+//function groupData()
+//{
+//  var hoursMap = {};
   // Not updating the actual variables for now, so it doesn't mess with the rendering
-  var TEMP_totalPlayed = totalPlayed.forEach(function(d){
+//  var TEMP_totalPlayed = totalPlayed.forEach(function(d){
     // Rounds to the nearest whole digit to ensure that close decimal values are grouped together
     // Any game with less than 30 minutes played is listed as zero hours
-      if (d.HoursPlayed >= 0.5)
-          roundedHours = Math.round(d.HoursPlayed);
-      else
-          roundedHours = 0;
+//      if (d.HoursPlayed >= 0.5)
+//          roundedHours = Math.round(d.HoursPlayed);
+//      else
+//          roundedHours = 0;
 
-      hoursMap[roundedHours] = hoursMap[roundedHours] || [];
-      hoursMap[roundedHours].push(d.Game);
-  });
-  var purchaseMap = {};
-  var TEMP_purchaseCount = purchaseCount.forEach(function(d){
-      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
-      purchaseMap[d.NumPurchased].push(d.Game);
-  });
-
+//      hoursMap[roundedHours] = hoursMap[roundedHours] || [];
+//      hoursMap[roundedHours].push(d.Game);
+//  });
+// var purchaseMap = {};
+//  var TEMP_purchaseCount = purchaseCount.forEach(function(d){
+//      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
+//      purchaseMap[d.NumPurchased].push(d.Game);
+//  });
   // Prints map for testing
 /*
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
   }*/
-}
+//}
 //end of file

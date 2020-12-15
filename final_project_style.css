@@ -1,7 +1,8 @@
 /**
  * Custom cross-browser styles for keyboard :focus overrides defaults.
  */
- *:focus {
+
+ *:focus { 
     outline: 0 !important;
     box-shadow:
       0 0 0 .2rem #fff,
