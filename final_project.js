@@ -2,8 +2,7 @@
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
 
 var width  = document.getElementById('viz').clientWidth;
-console.log(width);
-var height = 100860; // This height doesn't show all the data
+var height = 100820;
 
 // Declare variables here to take them out of the data.csv function
 //var totalPlayed = [];
@@ -29,7 +28,7 @@ var tip = d3.tip()
 			total = properties.TotalHours;
 			//console.log(d);
 			if (Math.round(hrs) >= 1)
-			     return `${gameName}</br>${Math.round(hrs)} hours played</br>${num} purchased
+			     return `${gameName}</br>${Math.round(hrs)} average hours played</br>${num} purchased
            </br>${Math.round(total)} total hours played`;
       else
            return `${gameName}</br> < 1 average hours played</br>${num} purchased
@@ -70,7 +69,7 @@ data = d3.csv("steam-200k-cleaned.csv")
               count[elem.Game] = 1;
            }
          }
-	
+
          if ((elem.Action).localeCompare("purchase"))
          {
            if (pCount.hasOwnProperty(elem.Game))
@@ -85,7 +84,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        });
        for (var prop in holder)
        {
-         
+
 	hrs = holder[prop];
 	if(hrs > maxhrs){
 		maxhrs = hrs;
@@ -98,20 +97,20 @@ data = d3.csv("steam-200k-cleaned.csv")
        // Sorts from most average hours played to least
        //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
        purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
-  
+
        // Test to make sure correct values are being printed
          //purchaseCount.forEach(printEach);
          //totalPlayed.forEach(printEach);
          //overallPlaytime.forEach(printEach);
          //console.log(purchaseCount.length);
-  
+
        updateGraph(dataByGame, 1);
 
 });
 function getBarColor(d){
 	hrs = d.TotalHours;
 	return logColorScale(hrs);
-	//return seqColorScale(hrs); 
+	//return seqColorScale(hrs);
 }
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
@@ -134,7 +133,7 @@ function updateGraph(newData, dataKey)
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
-            .domain([0, maXvalue]);
+            .domain([0, maXvalue + (maXvalue * .175)]);
 
   // appends background
   svg.append("rect")
@@ -147,7 +146,6 @@ function updateGraph(newData, dataKey)
     d3.select("h4").text("Games by Average Hours Played")
   else {
     d3.select("h4").text("Games by Total Copies Purchased")
-
   }
 
   // append x axis
@@ -177,10 +175,27 @@ function updateGraph(newData, dataKey)
      .attr("height", yAxis.bandwidth())
      .attr("fill", getBarColor)
      .attr("x", 0)
-     .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
-                                 else return xAxis(d.NumPurchased);
+     .attr("width", function(d) {if (dataKey == 0)
+                                 {
+                                   // Set minimum bar size if the data is too small
+                                   if ((xAxis(d.HoursPlayed) - margin.left) < 5)
+                                      return 5;
+                                   else
+                                      return xAxis(d.HoursPlayed) - margin.left;
+                                 }
+                                 else
+                                 {
+                                     // Test print for the scaling of the bars
+                                     //console.log(d.NumPurchased + "////" + xAxis(d.NumPurchased));
+                                     if ((xAxis(d.NumPurchased) - margin.left) < 5)
+                                        return 5;
+                                     else
+                                        return xAxis(d.NumPurchased) - margin.left;
+                                 }
                                })
-     .on("click",tip.show);
+     .attr("stroke", "black")
+     .on("mouseover",tip.show)
+     .on("mouseout",tip.hide);
 }
 
 // Updates graph with different dataset
@@ -215,7 +230,6 @@ function sortHighest()
       {
 	dataByGame = dataByGame.sort((a,b) => b.NumPurchased - a.NumPurchased);
         updateGraph(dataByGame, 1);
-
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
 }
@@ -225,14 +239,12 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
-
       //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
       //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
 	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
         updateGraph(dataByGame, 0);
-
       }
       else
       {
@@ -261,21 +273,6 @@ function sortAlphabet()
           return 0;
       });
 
-      //purchaseCount = purchaseCount.sort(function(a, b)
-      //{
-      //  var game1 = a.Game.toLowerCase();
-      //  var game2 = b.Game.toLowerCase();
-      //  if (game1 > game2)
-      //    return 1;
-      //  if (game2 > game1)
-      //    return -1;
-      //  else
-      //    return 0;
-      //});
-
-      // Test print
-      //totalPlayed.forEach(function(d) {console.log(d.Game); })
-
       if (displayingAvg)
       {
         updateGraph(dataByGame, 0);
@@ -286,8 +283,6 @@ function sortAlphabet()
       }
 }
 
-// Groups together games with the same x value
-// Still need to figure out how we would display this (using hover tooltip maybe?)
 //function groupData()
 //{
 //  var hoursMap = {};
