@@ -1,8 +1,10 @@
 // set dimensions and margins of the graph
 margin = ({top: 100, right: 20, bottom: 70, left: 220});
+
 var width  = document.getElementById('viz').clientWidth;
 console.log(width);
 var height = 100860; // This height doesn't show all the data
+
 
 // Declare variables here to take them out of the data.csv function
 //var totalPlayed = [];
@@ -95,8 +97,9 @@ data = d3.csv("steam-200k-cleaned.csv")
          //totalPlayed.forEach(printEach);
          //console.log(purchaseCount.length);
 
-       // update nbars variable and height after data is read in
+
        updateGraph(dataByGame, 1);
+
 });
 function getBarColor(d){
 	hrs = d.TotalHours;
@@ -133,9 +136,11 @@ function updateGraph(newData, dataKey)
 
   // change header text
   if (dataKey == 0)
+
     d3.select("h5").text("Games by Number of Hours Played")
   else {
     d3.select("h5").text("Games by Total Copies Purchased")
+
   }
 
   // append x axis
@@ -191,6 +196,7 @@ function changeGraph()
 function sortHighest()
 {
       svg.selectAll("*").remove();
+
       //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
       //purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
       if (displayingAvg)
@@ -202,6 +208,7 @@ function sortHighest()
       {
 	dataByGame = dataByGame.sort((a,b) => b.NumPurchased - a.NumPurchased);
         updateGraph(dataByGame, 1);
+
           //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
 }
@@ -211,12 +218,14 @@ function sortHighest()
 function sortLowest()
 {
       svg.selectAll("*").remove();
+
       //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
       //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
 	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
         updateGraph(dataByGame, 0);
+
       }
       else
       {
@@ -293,11 +302,14 @@ function sortAlphabet()
 //      purchaseMap[d.NumPurchased].push(d.Game);
 //  });
 
+
   // Prints map for testing
 /*
   for (var key in purchaseMap)
   {
     console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
   }*/
+
 //}
+
 //end of file
