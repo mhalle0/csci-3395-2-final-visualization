@@ -129,7 +129,15 @@ function updateGraph(newData, dataKey)
             .range([0, (newData.length + 1) * 28])
             // Set paddingInner to change space between the bars
             .paddingInner(0.25)
-            .domain(newData.map(function(d) {return d.Game }));
+            .domain(newData.map(function(d) {
+              if(d.Game.length < 32) {
+                return (d.Game);
+              }
+              else {
+                return ((d.Game.substring(0, 32) + "..."));
+              }
+            }))
+              //return d.Game }));
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
@@ -171,7 +179,17 @@ function updateGraph(newData, dataKey)
      .append("rect")
      .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
      .attr("class", "bar")
-     .attr("y", function(d) {return yAxis(d.Game); })
+     .attr("y", function(d) {
+      if((d.Game).length < 32) 
+      {
+        return (yAxis(d.Game));
+      }
+      else {
+        return ((yAxis(d.Game.substring(0, 32) + "...")));
+      }
+    })
+       
+      //return yAxis(d.Game);})
      .attr("height", yAxis.bandwidth())
      .attr("fill", getBarColor)
      .attr("x", 0)
