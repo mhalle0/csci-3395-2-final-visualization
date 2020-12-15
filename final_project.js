@@ -178,7 +178,8 @@ function updateGraph(newData, dataKey)
      .attr("width", function(d) {if (dataKey == 0) return xAxis(d.HoursPlayed)
                                  else return xAxis(d.NumPurchased);
                                })
-     .on("click",tip.show);
+     .attr("stroke", "black")
+     .on("mouseover",tip.show);
 }
 
 // Updates graph with different dataset

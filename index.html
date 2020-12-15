@@ -33,7 +33,7 @@
       #vizArea {
         width: 100%;
         height: 700px;
-        overflow-x: hidden;
+        overflow-x: scroll;
         overflow-y: scroll;
       }
       
@@ -62,11 +62,10 @@
       <div class= "instructions">
         <h5>Instructions:</h5>
         <p> "Toggle Data" - Click to switch between a visualization of Steam games by Average Hours Played or Total Number of Copies Purchased </p>
-        <p> (NOT WORKING YET) "Group Similar Values" - Click to make every bar display a unique value. All games that fit under that value can be seen by clicking the y-axis value. <p>
         <p> "Sort Data" - Click to pick how you want the displayed data to be sorted. </p>
         <p> You can also hover over the bars to get exact data about a game as well as information that is not displayed. </p>
       </div>
-      <div class="mx-auto" style="width: 400px">
+      <div class="mx-auto" style="width: 240px">
         <div class="row">
           <div class="col-md-2"></div>
           <div class="col-md-2"></div>
@@ -74,7 +73,6 @@
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-dark" id="btn_toggledata_overview" data-toggle="button" name="Update"
               onclick="changeGraph()">Toggle Data</button>
-              <button type="button" class="btn btn-dark" data-toggle="button" onclick="groupData()">Group Similar Values</button>
               <div class="btn-group" role="group">
                 <button id="btnGroupDrop1type" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">Sort Data</button>
                 <div class="dropdown-menu">
