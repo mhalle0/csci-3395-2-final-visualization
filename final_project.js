@@ -141,7 +141,7 @@ function updateGraph(newData, dataKey)
 
   var xAxis = d3.scaleLinear()
             .range([margin.left, width])
-            .domain([0, maXvalue + (maXvalue * .1)]);
+            .domain([0, maXvalue + (maXvalue * .175)]);
 
   // appends background
   svg.append("rect")
