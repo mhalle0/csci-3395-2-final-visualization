@@ -21,6 +21,11 @@
 
     <!-- currently d3 only takes CSS from here, not external stylesheet -->
     <style>
+      html, body
+      {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
       .d3-tip
       {
         background: rgba(42, 42, 42, .8);
@@ -49,19 +54,30 @@
       <div class="row" id="project-title">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-          <h1 class="text-center">CSCI 3395 2 · Data Visualization · Final Project</h1>
-          <h2 class="text-center">Steam Data Visualization</h2>
+          <h1 class="display-5 text-center">CSCI 3395 2 · Data Visualization · Final Project</h1>
+          <h2 class="display-6 text-center">Steam Data Visualization</h2>
         </div>
         <div class="col-md-2"></div>
       </div>
-      <div class="divider py-1 bg-dark my-4"></div>      
-      <div class= "instructions">
-        <h5>Instructions:</h5>
-        <p> "Toggle Data" - Click to switch between a visualization of Steam games by Average Hours Played or Total Number of Copies Purchased </p>
-        <p> "Sort Data" - Click to pick how you want the displayed data to be sorted. </p>
-        <p> You can hover over the bars to get exact data about a game as well as information that is not displayed. </p>
-        <p> The color of the bar represents combined playtime across all players. Darker bars have a greater total hours played, which is separate from average hours played per individual.</p>
+      
+      <div class="divider py-1 bg-dark my-4"></div>  
+    
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <div class= "instructions">
+            <h5>Instructions</h5>
+            <ul>
+              <li>"Toggle Data" - Click to switch between a visualization of Steam games by Average Hours Played or Total Number of Copies Purchased</li>
+              <li>"Sort Data" - Click to pick how you want the displayed data to be sorted.</li>
+              <li>You can hover over the bars to get exact data about a game as well as information that is not displayed.</li>
+              <li>The color of the bar represents combined playtime across all players. Darker bars have a greater total hours played, which is separate from average hours played per individual.</li>
+            </ul>
+            <div class="col-md-3"></div>
+          </div>
+        </div>
       </div>
+    
       <div class="mx-auto" style="width: 240px">
         <div class="row">
           <div class="col-md-2"></div>
@@ -105,6 +121,53 @@
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="instructions pt-4 pb-2">
+        <h5>About the dataset</h5>
+        <p>The dataset used for this visualization contains a 2016 sample of 200,000 interactions with the video game digital distribution service Steam. 
+           The data includes game purchases (or downloads in the case of free games), hours spent playing each game, and the User ID attached to these activities. 
+           This dataset is not a complete list of activities on Steam, but its large sample size makes it a relatively solid representation of game sales and playtime in 2016. 
+        </p>
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="instructions py-2">
+        <h5>Notable finds from the data</h5>
+        <p>Our visualization ended up highlighting the disparity between total hours played and average hours played. 
+           Games like Dota 2 or Team Fortress 2, topping the chart in copies purchased and total play time, did not equally dominate the average play time. 
+           These are also free titles, and may have a significant number of players who only downloaded them to try out. 
+           On the other hand, games like the Football Manager series, as well as more obscure titles, hold the highest average play times, thanks to the dedication of their smaller audiences. 
+        </p>
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="instructions pt-2 pb-0">
+        <h5>Issues with D3 and the data</h5>
+        <p>Some game titles were too long to fit on the graph, so we truncated those with exceptionally long titles and left the full titles on the tooltip. 
+           Scaling was an issue as many games were bought by only a few people while the most popular titles were bought by thousands.
+           It was difficult to get all the games to fit on the SVG, so we used CSS to implement scrolling. 
+           For a while translating the y axis and bars caused the bars to be much longer than they should have been, but this was fixed by more careful translating. 
+        </p>
+        <div class="col-md-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider py-1 bg-dark my-4"></div>
+
 
   <div class="my-2 mx-5" id="footer">
     <div class="container-fluid px-0">
