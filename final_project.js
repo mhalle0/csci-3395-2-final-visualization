@@ -1,16 +1,14 @@
 // set dimensions and margins of the graph
-margin = ({top: 100, right: 20, bottom: 70, left: 220});
+margin = ({top: 100, right: 120, bottom: 70, left: 220});
 
 var width  = document.getElementById('viz').clientWidth;
 var height = 100820;
 
 // Declare variables here to take them out of the data.csv function
-//var totalPlayed = [];
-//var purchaseCount = [];
-//var totalHours = [];
 var dataByGame = [];
 var minhrs = 1;
 var maxhrs = 999999;
+
 // Test function for printing each object
 function printEach(row)
 {
@@ -26,7 +24,6 @@ var tip = d3.tip()
 			num = properties.NumPurchased;
 			hrs = properties.HoursPlayed;
 			total = properties.TotalHours;
-			//console.log(d);
 			if (Math.round(hrs) >= 1)
 			     return `${gameName}</br>${Math.round(hrs)} average hours played</br>${num} purchased
            </br>${Math.round(total)} total hours played`;
@@ -44,6 +41,7 @@ const svg = d3.select("#vizArea")
               .attr("width", width)
               .attr("height", height);
 svg.call(tip);
+
 // Get data
 data = d3.csv("steam-200k-cleaned.csv")
             .then(function (data) {
@@ -89,13 +87,10 @@ data = d3.csv("steam-200k-cleaned.csv")
 	if(hrs > maxhrs){
 		maxhrs = hrs;
 	}
-	 //totalhrs.push({Game:prop, TotalHours: hrs});
-         //totalPlayed.push({ Game: prop, HoursPlayed: hrs / count[prop] });
-         //purchaseCount.push({ Game: prop, NumPurchased: pCount[prop] });
+
 	 dataByGame.push({Game: prop, NumPurchased: pCount[prop], HoursPlayed: hrs / count[prop], TotalHours: hrs});
        }
-       // Sorts from most average hours played to least
-       //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
+
        purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
 
        // Test to make sure correct values are being printed
@@ -110,7 +105,6 @@ data = d3.csv("steam-200k-cleaned.csv")
 function getBarColor(d){
 	hrs = d.TotalHours;
 	return logColorScale(hrs);
-	//return seqColorScale(hrs);
 }
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
@@ -120,9 +114,9 @@ function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
   if (dataKey == 0)
-      maXvalue = d3.max(dataByGame, function(d) {return d.HoursPlayed});
+      maXvalue = 1300;
   else
-      maXvalue = d3.max(dataByGame, function(d) {return d.NumPurchased});
+      maXvalue = 5000;
 
   //set x and y axes
   var yAxis = d3.scaleBand()
@@ -130,18 +124,17 @@ function updateGraph(newData, dataKey)
             // Set paddingInner to change space between the bars
             .paddingInner(0.25)
             .domain(newData.map(function(d) {
-              if(d.Game.length < 32) {
+              if(d.Game.length < 42) {
                 return (d.Game);
               }
               else {
-                return ((d.Game.substring(0, 32) + "..."));
+                return ((d.Game.substring(0, 42) + "..."));
               }
             }))
-              //return d.Game }));
 
   var xAxis = d3.scaleLinear()
-            .range([margin.left, width])
-            .domain([0, maXvalue + (maXvalue * .175)]);
+            .range([margin.left, width - margin.right])
+            .domain([0, maXvalue]);
 
   // appends background
   svg.append("rect")
@@ -159,15 +152,15 @@ function updateGraph(newData, dataKey)
   // append x axis
   svg.append("g")
      .attr("class", "x axis")
-     .attr("transform", "translate(" + 140 + ", " + 50 + ")")
-     .call(d3.axisTop(xAxis).ticks(6))
+     .attr("transform", "translate(" + 70 + ", " + 50 + ")")
+     .call(d3.axisTop(xAxis).ticks(12))
      // Can increase the font size of the y-axis with this call, but some games have really long names
      .style("font-size", "14px");
 
   // append y axis
   svg.append("g")
      .attr("class", "y axis")
-     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
+     .attr("transform", "translate(" + (margin.left + 70) + ", " + 50 + ")")
      .call(d3.axisLeft(yAxis))
      .style("font-size", "14px");
 
@@ -177,19 +170,19 @@ function updateGraph(newData, dataKey)
      .enter()
      .append("g")
      .append("rect")
-     .attr("transform", "translate(" + (margin.left + 140) + ", " + 50 + ")")
+     .attr("transform", "translate(" + (margin.left + 70) + ", " + 50 + ")")
      .attr("class", "bar")
      .attr("y", function(d) {
-      if((d.Game).length < 32) 
+      if((d.Game).length < 42) 
       {
         return (yAxis(d.Game));
       }
-      else {
-        return ((yAxis(d.Game.substring(0, 32) + "...")));
+      else
+      {
+        return ((yAxis(d.Game.substring(0, 42) + "...")));
       }
     })
        
-      //return yAxis(d.Game);})
      .attr("height", yAxis.bandwidth())
      .attr("fill", getBarColor)
      .attr("x", 0)
@@ -203,8 +196,6 @@ function updateGraph(newData, dataKey)
                                  }
                                  else
                                  {
-                                     // Test print for the scaling of the bars
-                                     //console.log(d.NumPurchased + "////" + xAxis(d.NumPurchased));
                                      if ((xAxis(d.NumPurchased) - margin.left) < 5)
                                         return 5;
                                      else
@@ -233,12 +224,10 @@ function changeGraph()
       }
 }
 
+
 function sortHighest()
 {
       svg.selectAll("*").remove();
-
-      //totalPlayed = totalPlayed.sort((a, b) => b.HoursPlayed - a.HoursPlayed);
-      //purchaseCount = purchaseCount.sort((a, b) => b.NumPurchased - a.NumPurchased)
       if (displayingAvg)
       {
 	dataByGame = dataByGame.sort((a,b) => b.HoursPlayed - a.HoursPlayed);
@@ -248,17 +237,12 @@ function sortHighest()
       {
 	dataByGame = dataByGame.sort((a,b) => b.NumPurchased - a.NumPurchased);
         updateGraph(dataByGame, 1);
-          //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
       }
 }
 
-// Probably works but I think we're having a display issue where all the lowest values are the statement
-// And our graph's not fitting everything onto the page.
 function sortLowest()
 {
       svg.selectAll("*").remove();
-      //totalPlayed = totalPlayed.sort((a, b) => a.HoursPlayed - b.HoursPlayed);
-      //purchaseCount = purchaseCount.sort((a, b) => a.NumPurchased - b.NumPurchased);
       if (displayingAvg)
       {
 	dataByGame = dataByGame.sort((a,b) => a.HoursPlayed - b.HoursPlayed);
@@ -266,16 +250,12 @@ function sortLowest()
       }
       else
       {
-        // Print statement shows that this does sort correctly
-        // But there's too many low values in the same range and graph only shows some of them
-          //purchaseCount.forEach(function(d) {console.log(d.NumPurchased)})
         dataByGame = dataByGame.sort((a,b) => a.NumPurchased - b.NumPurchased);
         updateGraph(dataByGame, 1);
       }
 }
 
 // Sorts the data alphabetically from 'A'-'Z'. Not case sensitive.
-// Again, seems to sort correctly but it's not displaying all the data.
 function sortAlphabet()
 {
       svg.selectAll("*").remove();
@@ -301,31 +281,4 @@ function sortAlphabet()
       }
 }
 
-//function groupData()
-//{
-//  var hoursMap = {};
-  // Not updating the actual variables for now, so it doesn't mess with the rendering
-//  var TEMP_totalPlayed = totalPlayed.forEach(function(d){
-    // Rounds to the nearest whole digit to ensure that close decimal values are grouped together
-    // Any game with less than 30 minutes played is listed as zero hours
-//      if (d.HoursPlayed >= 0.5)
-//          roundedHours = Math.round(d.HoursPlayed);
-//      else
-//          roundedHours = 0;
-
-//      hoursMap[roundedHours] = hoursMap[roundedHours] || [];
-//      hoursMap[roundedHours].push(d.Game);
-//  });
-// var purchaseMap = {};
-//  var TEMP_purchaseCount = purchaseCount.forEach(function(d){
-//      purchaseMap[d.NumPurchased] = purchaseMap[d.NumPurchased] || [];
-//      purchaseMap[d.NumPurchased].push(d.Game);
-//  });
-  // Prints map for testing
-/*
-  for (var key in purchaseMap)
-  {
-    console.log("Key: " + key + "\nGames: " + purchaseMap[key] + "\n");
-  }*/
-//}
 //end of file
