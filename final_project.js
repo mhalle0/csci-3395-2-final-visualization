@@ -14,7 +14,7 @@ function printEach(row)
 {
   console.log(row);
 }
-
+//Creates a tooltip to display name and data for each game
 var tip = d3.tip()
 		.attr("class","d3-tip")
 		.offset([-5,0])
@@ -31,6 +31,7 @@ var tip = d3.tip()
            return `${gameName}</br> < 1 average hours played</br>${num} purchased
            </br> < 1 total hours played`;
 		});
+//Logarithmic scale for coloring the bars 
 var logScale = d3.scaleLog().domain([minhrs, maxhrs]);
 var logColorScale = d3.scaleSequential(function(d){return d3.interpolateGreens(logScale(d));});
 var seqColorScale = d3.scaleSequential(d3.interpolateGreens).domain([minhrs, maxhrs]);
@@ -40,6 +41,7 @@ const svg = d3.select("#vizArea")
               .append("svg")
               .attr("width", width)
               .attr("height", height);
+//calling the tooltip
 svg.call(tip);
 
 // Get data
@@ -102,6 +104,7 @@ data = d3.csv("steam-200k-cleaned.csv")
        updateGraph(dataByGame, 1);
 
 });
+//function uses the total hours and the logarithmic scale to get a green for the bar
 function getBarColor(d){
 	hrs = d.TotalHours;
 	return logColorScale(hrs);
@@ -109,7 +112,7 @@ function getBarColor(d){
 // Using ints (dataKey) to identify which dataset is being used for now. Probably a better way to do this.
 // 0 is for average hours played dataset
 // 1 is for total copies purchased dataset
-
+//Function that actually draws the visualization after each change
 function updateGraph(newData, dataKey)
 {
   var maXvalue = null;
@@ -224,7 +227,7 @@ function changeGraph()
       }
 }
 
-
+//sorts data highest to lowest
 function sortHighest()
 {
       svg.selectAll("*").remove();
@@ -239,7 +242,7 @@ function sortHighest()
         updateGraph(dataByGame, 1);
       }
 }
-
+//sorts data lowest to highest
 function sortLowest()
 {
       svg.selectAll("*").remove();
