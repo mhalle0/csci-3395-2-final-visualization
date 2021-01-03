@@ -2,7 +2,7 @@
 margin = ({top: 100, right: 120, bottom: 70, left: 220});
 
 var width  = document.getElementById('viz').clientWidth;
-var height = 100820;
+var height = 100823;
 
 // Declare variables here to take them out of the data.csv function
 var dataByGame = [];
@@ -56,7 +56,6 @@ data = d3.csv("steam-200k-cleaned.csv")
   var holder = {};
   var count = {};
   var pCount = {};
-  var gameSubstring = {};
   data.forEach(function(elem) {
     // Excludes all null elements
     if (elem.HoursPlayed != -1)
@@ -89,11 +88,19 @@ data = d3.csv("steam-200k-cleaned.csv")
   for (var prop in holder)
   {
 	  hrs = holder[prop];
+    
     if(hrs > maxhrs)
     {
 		  maxhrs = hrs;
-	  }
-	  dataByGame.push({Game: prop, NumPurchased: pCount[prop], HoursPlayed: hrs / count[prop], TotalHours: hrs, GameAbbr: gameSubstring});
+    }
+    
+    dataByGame.push(
+      {
+        Game: prop, 
+        NumPurchased: pCount[prop], 
+        HoursPlayed: hrs / count[prop],
+        TotalHours: hrs
+      });
   }
 
   purchaseCount = dataByGame.sort((a, b) => b.NumPurchased - a.NumPurchased);
@@ -103,7 +110,7 @@ data = d3.csv("steam-200k-cleaned.csv")
   // totalPlayed.forEach(printEach);
   // overallPlaytime.forEach(printEach);
   // console.log(purchaseCount.length);
-  console.log(dataByGame);
+  // console.log(dataByGame);
 
   updateGraph(dataByGame, 1);
 });
@@ -175,6 +182,18 @@ function updateGraph(newData, dataKey)
      .attr("class", "y axis")
      .attr("transform", "translate(" + (margin.left + 70) + ", " + 50 + ")")
      .call(d3.axisLeft(yAxis))
+       //truncate game titles — only effects y-axis text, full titles visible on tooltips
+       .selectAll("text").text(function(t)
+       {
+         if(t.length > 32)
+         {
+           return(t.substring(0, 32) + "...");
+         }
+         else
+         {
+           return t;
+         }
+       })
      .style("font-size", "14px");
 
   // create the bars for bargraph
@@ -197,9 +216,9 @@ function updateGraph(newData, dataKey)
         if (dataKey == 0)
         {
           // Set minimum bar size if the data is too small
-          if ((xAxis(d.HoursPlayed) - margin.left) < 5)
+          if ((xAxis(d.HoursPlayed) - margin.left) < 10)
           {
-            return 5;
+            return 10;
           }
           else
           {
@@ -208,9 +227,9 @@ function updateGraph(newData, dataKey)
         }
         else
         {
-          if ((xAxis(d.NumPurchased) - margin.left) < 5)
+          if ((xAxis(d.NumPurchased) - margin.left) < 10)
           {
-            return 5;
+            return 10;
           }
           else
           {
@@ -221,6 +240,7 @@ function updateGraph(newData, dataKey)
      .attr("stroke", "black")
      .on("mouseover",tip.show)
      .on("mouseout",tip.hide);
+      
 }
 
 // Updates graph with different dataset
